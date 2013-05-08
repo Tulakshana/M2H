@@ -1,9 +1,9 @@
 //
 //  MHConverter.m
-//  Webr
+//  
 //
 //  Created by Tulakshana on 06/05/2013.
-//  Copyright (c) 2013 Lazy Production. All rights reserved.
+//  
 //
 
 #import "MHConverter.h"
