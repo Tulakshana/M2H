@@ -30,10 +30,19 @@
 
 - (NSString *)makeItalic:(NSString *)string{
 
-    NSString *regString = @"[\\*_]+[a-zA-Z0-9\"\\'\\?\\!\\;\\:\\#\\$\\%\\&\\(\\)\\*\\+\\-\\/\\<\\>\\=\\@\\[\\]\\\\^\\_\\{\\}\\|\\~ \\.]+[\\*_]";
+    NSString *regString = @"[\\*\\_].*[\\_\\*]";
     NSError *error = NULL;
     NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:regString options:NSRegularExpressionCaseInsensitive error:&error];
     string = [regex stringByReplacingMatchesInString:string options:0 range:NSMakeRange(0, [string length]) withTemplate:@"<i>$0</i>"];
+    
+    NSArray *array = [regex matchesInString:string options:0 range:NSMakeRange(0, [string length])];
+    for (int i = 0; i < [array count]; i++) {
+        NSTextCheckingResult *result = [array objectAtIndex:i];
+        DLog(@"%d %d",result.range.length,result.range.location);
+        NSString *match = [string substringWithRange:result.range];
+        DLog(@"%@",match);
+    }
+    DLog(@"%@",string);
     string = [string stringByReplacingOccurrencesOfString:@"<i>*" withString:@"<i>"];
     string = [string stringByReplacingOccurrencesOfString:@"*</i>" withString:@"</i>"];
     string = [string stringByReplacingOccurrencesOfString:@"<i>_" withString:@"<i>"];
@@ -44,7 +53,8 @@
 
 - (NSString *)makeBold:(NSString *)string{
 
-    NSString *regString = @"[\\*_]+[\\*_]+[a-zA-Z0-9\"\\'\\?\\!\\;\\:\\#\\$\\%\\&\\(\\)\\*\\+\\-\\/\\<\\>\\=\\@\\[\\]\\\\^\\_\\{\\}\\|\\~ \\.]+[\\*_]+[\\*_]";
+//    NSString *regString = @"[\\*_]+[\\*_]+[a-zA-Z0-9\"\\'\\?\\!\\;\\:\\#\\$\\%\\&\\(\\)\\*\\+\\-\\/\\<\\>\\=\\@\\[\\]\\\\^\\_\\{\\}\\|\\~ \\.]+[\\*_]+[\\*_]";
+    NSString *regString = @"[\\*\\_][\\*\\_].*[\\_\\*][\\_\\*]";
     NSError *error = NULL;
     NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:regString options:NSRegularExpressionCaseInsensitive error:&error];
     string = [regex stringByReplacingMatchesInString:string options:0 range:NSMakeRange(0, [string length]) withTemplate:@"<strong>$0</strong>"];
@@ -60,7 +70,8 @@
     //![alt text](/path/img.jpg "Title")
     DLog(@"%@",string);
     NSMutableArray *replacements = [[NSMutableArray alloc]init];
-    NSString *regString = @"[\\!]+[\\[]+[a-zA-Z0-9\"\\'\\?\\!\\;\\:\\#\\$\\%\\&\\*\\+\\-\\/\\<\\>\\=\\@\\\\^\\_\\{\\}\\|\\~\\s\\.]+[\\]]+[\\(]+[a-zA-Z0-9\"\\'\\?\\!\\;\\:\\#\\$\\%\\&\\*\\+\\-\\/\\<\\>\\=\\@\\\\^\\_\\{\\}\\|\\~\\.\\s]+[\\)]";
+//    NSString *regString = @"[\\!]+[\\[]+[a-zA-Z0-9\"\\'\\?\\!\\;\\:\\#\\$\\%\\&\\*\\+\\-\\/\\<\\>\\=\\@\\\\^\\_\\{\\}\\|\\~\\s\\.]+[\\]]+[\\(]+[a-zA-Z0-9\"\\'\\?\\!\\;\\:\\#\\$\\%\\&\\*\\+\\-\\/\\<\\>\\=\\@\\\\^\\_\\{\\}\\|\\~\\.\\s]+[\\)]";
+    NSString *regString = @"[\\!][\\[].*[\\]][\\(].*[\\)]";
     NSError *error = NULL;
     NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:regString options:NSRegularExpressionCaseInsensitive error:&error];
     NSArray *array = [regex matchesInString:string options:0 range:NSMakeRange(0, [string length])];
@@ -136,7 +147,8 @@
     //![alt text](/path/img.jpg "Title")
     DLog(@"%@",string);
     NSMutableArray *replacements = [[NSMutableArray alloc]init];
-    NSString *regString = @"[\\[]+[a-zA-Z0-9\"\\'\\?\\!\\;\\:\\#\\$\\%\\&\\*\\+\\-\\/\\<\\>\\=\\@\\\\^\\_\\{\\}\\|\\~\\s\\.]+[\\]]+[\\(]+[a-zA-Z0-9\"\\'\\?\\!\\;\\:\\#\\$\\%\\&\\*\\+\\-\\/\\<\\>\\=\\@\\\\^\\_\\{\\}\\|\\~\\.\\s]+[\\)]";
+//    NSString *regString = @"[\\[]+[a-zA-Z0-9\"\\'\\?\\!\\;\\:\\#\\$\\%\\&\\*\\+\\-\\/\\<\\>\\=\\@\\\\^\\_\\{\\}\\|\\~\\s\\.]+[\\]]+[\\(]+[a-zA-Z0-9\"\\'\\?\\!\\;\\:\\#\\$\\%\\&\\*\\+\\-\\/\\<\\>\\=\\@\\\\^\\_\\{\\}\\|\\~\\.\\s]+[\\)]";
+        NSString *regString = @"[\\[].*[\\]][\\(].*[\\)]";
     NSError *error = NULL;
     NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:regString options:NSRegularExpressionCaseInsensitive error:&error];
     NSArray *array = [regex matchesInString:string options:0 range:NSMakeRange(0, [string length])];
@@ -217,22 +229,22 @@
         NSString *regString = nil;
         switch (i) {
             case 1:
-                regString = @"[\\<]+[h]+[1]+[\\>]+[a-zA-Z0-9\"\\'\\?\\!\\;\\:\\$\\%\\&\\(\\)\\*\\+\\-\\/\\<\\>\\=\\@\\[\\]\\\\^\\_\\{\\}\\|\\~ \\.]+[\n]";
+                regString = @"[\\<][h][1][\\>].*[\n]";
                 break;
             case 2:
-                regString = @"[\\<]+[h]+[2]+[\\>]+[a-zA-Z0-9\"\\'\\?\\!\\;\\:\\$\\%\\&\\(\\)\\*\\+\\-\\/\\<\\>\\=\\@\\[\\]\\\\^\\_\\{\\}\\|\\~ \\.]+[\n]";
+                regString = @"[\\<][h][2][\\>].*[\n]";
                 break;
             case 3:
-                regString = @"[\\<]+[h]+[3]+[\\>]+[a-zA-Z0-9\"\\'\\?\\!\\;\\:\\$\\%\\&\\(\\)\\*\\+\\-\\/\\<\\>\\=\\@\\[\\]\\\\^\\_\\{\\}\\|\\~ \\.]+[\n]";
+                regString = @"[\\<][h][3][\\>].*[\n]";
                 break;
             case 4:
-                regString = @"[\\<]+[h]+[4]+[\\>]+[a-zA-Z0-9\"\\'\\?\\!\\;\\:\\$\\%\\&\\(\\)\\*\\+\\-\\/\\<\\>\\=\\@\\[\\]\\\\^\\_\\{\\}\\|\\~ \\.]+[\n]";
+                regString = @"[\\<][h][4][\\>].*[\n]";
                 break;
             case 5:
-                regString = @"[\\<]+[h]+[5]+[\\>]+[a-zA-Z0-9\"\\'\\?\\!\\;\\:\\$\\%\\&\\(\\)\\*\\+\\-\\/\\<\\>\\=\\@\\[\\]\\\\^\\_\\{\\}\\|\\~ \\.]+[\n]";
+                regString = @"[\\<][h][5][\\>].*[\n]";
                 break;
             case 6:
-                regString = @"[\\<]+[h]+[6]+[\\>]+[a-zA-Z0-9\"\\'\\?\\!\\;\\:\\$\\%\\&\\(\\)\\*\\+\\-\\/\\<\\>\\=\\@\\[\\]\\\\^\\_\\{\\}\\|\\~ \\.]+[\n]";
+                regString = @"[\\<][h][6][\\>].*[\n]";
                 break;
             default:
                 break;
@@ -260,7 +272,7 @@
         NSString *subStr = [array objectAtIndex:i];
 
             DLog(@"%@",subStr);
-            NSString *regString = @"[0-9]+[\\.]+[ ]+[a-zA-Z0-9\"\\'\\?\\!\\;\\:\\#\\$\\%\\&\\(\\)\\*\\+\\-\\/\\<\\>\\=\\@\\[\\]\\\\^\\_\\{\\}\\|\\~ \\.]*";
+            NSString *regString = @"[0-9][\\.][ ].*";
             NSError *error = NULL;
             NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:regString options:NSRegularExpressionCaseInsensitive error:&error];
             int count = [regex numberOfMatchesInString:subStr options:0 range:NSMakeRange(0, [subStr length])];
@@ -304,7 +316,7 @@
         NSString *subStr = [array objectAtIndex:i];
         
         DLog(@"%@",subStr);
-        NSString *regString = @"[\\*]+[ ]+[a-zA-Z0-9\"\\'\\?\\!\\;\\:\\#\\$\\%\\&\\(\\)\\*\\+\\-\\/\\<\\>\\=\\@\\[\\]\\\\^\\_\\{\\}\\|\\~ \\.]*";
+        NSString *regString = @"[\\*][ ].*";
         NSError *error = NULL;
         NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:regString options:NSRegularExpressionCaseInsensitive error:&error];
         int count = [regex numberOfMatchesInString:subStr options:0 range:NSMakeRange(0, [subStr length])];
