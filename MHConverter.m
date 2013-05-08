@@ -199,6 +199,7 @@
         string = [string stringByReplacingOccurrencesOfString:[dic valueForKey:@"match"] withString:[dic valueForKey:@"replacement"]];
     }
     [replacements release];
+    
     return string;
 }
 
@@ -211,35 +212,37 @@
     string = [string stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"###"] withString:[NSString stringWithFormat:@"<h3>"]];
     string = [string stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"##"] withString:[NSString stringWithFormat:@"<h2>"]];
     string = [string stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"#"] withString:[NSString stringWithFormat:@"<h1>"]];
-    
+    DLog(@"%@",string);
     for (int i = 1; i < 7; i++) {
         NSString *regString = nil;
         switch (i) {
             case 1:
-                regString = @"[<h1>]+[a-zA-Z0-9\"\\'\\?\\!\\;\\:\\$\\%\\&\\(\\)\\*\\+\\-\\/\\<\\>\\=\\@\\[\\]\\\\^\\_\\{\\}\\|\\~ \\.]+[\n]";
+                regString = @"[\\<]+[h]+[1]+[\\>]+[a-zA-Z0-9\"\\'\\?\\!\\;\\:\\$\\%\\&\\(\\)\\*\\+\\-\\/\\<\\>\\=\\@\\[\\]\\\\^\\_\\{\\}\\|\\~ \\.]+[\n]";
                 break;
             case 2:
-                regString = @"[<h2>]+[a-zA-Z0-9\"\\'\\?\\!\\;\\:\\$\\%\\&\\(\\)\\*\\+\\-\\/\\<\\>\\=\\@\\[\\]\\\\^\\_\\{\\}\\|\\~ \\.]+[\n]";
+                regString = @"[\\<]+[h]+[2]+[\\>]+[a-zA-Z0-9\"\\'\\?\\!\\;\\:\\$\\%\\&\\(\\)\\*\\+\\-\\/\\<\\>\\=\\@\\[\\]\\\\^\\_\\{\\}\\|\\~ \\.]+[\n]";
                 break;
             case 3:
-                regString = @"[<h3>]+[a-zA-Z0-9\"\\'\\?\\!\\;\\:\\$\\%\\&\\(\\)\\*\\+\\-\\/\\<\\>\\=\\@\\[\\]\\\\^\\_\\{\\}\\|\\~ \\.]+[\n]";
+                regString = @"[\\<]+[h]+[3]+[\\>]+[a-zA-Z0-9\"\\'\\?\\!\\;\\:\\$\\%\\&\\(\\)\\*\\+\\-\\/\\<\\>\\=\\@\\[\\]\\\\^\\_\\{\\}\\|\\~ \\.]+[\n]";
                 break;
             case 4:
-                regString = @"[<h4>]+[a-zA-Z0-9\"\\'\\?\\!\\;\\:\\$\\%\\&\\(\\)\\*\\+\\-\\/\\<\\>\\=\\@\\[\\]\\\\^\\_\\{\\}\\|\\~ \\.]+[\n]";
+                regString = @"[\\<]+[h]+[4]+[\\>]+[a-zA-Z0-9\"\\'\\?\\!\\;\\:\\$\\%\\&\\(\\)\\*\\+\\-\\/\\<\\>\\=\\@\\[\\]\\\\^\\_\\{\\}\\|\\~ \\.]+[\n]";
                 break;
             case 5:
-                regString = @"[<h5>]+[a-zA-Z0-9\"\\'\\?\\!\\;\\:\\$\\%\\&\\(\\)\\*\\+\\-\\/\\<\\>\\=\\@\\[\\]\\\\^\\_\\{\\}\\|\\~ \\.]+[\n]";
+                regString = @"[\\<]+[h]+[5]+[\\>]+[a-zA-Z0-9\"\\'\\?\\!\\;\\:\\$\\%\\&\\(\\)\\*\\+\\-\\/\\<\\>\\=\\@\\[\\]\\\\^\\_\\{\\}\\|\\~ \\.]+[\n]";
                 break;
             case 6:
-                regString = @"[<h6>]+[a-zA-Z0-9\"\\'\\?\\!\\;\\:\\$\\%\\&\\(\\)\\*\\+\\-\\/\\<\\>\\=\\@\\[\\]\\\\^\\_\\{\\}\\|\\~ \\.]+[\n]";
+                regString = @"[\\<]+[h]+[6]+[\\>]+[a-zA-Z0-9\"\\'\\?\\!\\;\\:\\$\\%\\&\\(\\)\\*\\+\\-\\/\\<\\>\\=\\@\\[\\]\\\\^\\_\\{\\}\\|\\~ \\.]+[\n]";
                 break;
             default:
                 break;
         }
+
         
         NSError *error = NULL;
         NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:regString options:NSRegularExpressionCaseInsensitive error:&error];
         string = [regex stringByReplacingMatchesInString:string options:0 range:NSMakeRange(0, [string length]) withTemplate:[NSString stringWithFormat:@"$0</h%d>",i]];
+        DLog(@"%@",string);
         
     }
 
@@ -266,7 +269,6 @@
                     subStr = [NSString stringWithFormat:@"</ol>%@",subStr];
                     listTagOpened = FALSE;
                 }
-                
             }else {
                 if (!listTagOpened) {
                     subStr = [regex stringByReplacingMatchesInString:subStr options:0 range:NSMakeRange(0, [subStr length]) withTemplate:@"<ol><li>$0</li>"];
