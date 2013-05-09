@@ -13,6 +13,9 @@
 @implementation MHConverter
 
 - (NSString *)getHTML:(NSString *)string{
+    if ([string length] <= 0) {
+        return @"";
+    }
     string = [self makeBold:string];
     string = [self makeItalic:string]; 
     
