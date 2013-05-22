@@ -38,13 +38,13 @@
     NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:regString options:NSRegularExpressionCaseInsensitive error:&error];
     string = [regex stringByReplacingMatchesInString:string options:0 range:NSMakeRange(0, [string length]) withTemplate:@"<i>$0</i>"];
     
-    NSArray *array = [regex matchesInString:string options:0 range:NSMakeRange(0, [string length])];
-    for (int i = 0; i < [array count]; i++) {
-        NSTextCheckingResult *result = [array objectAtIndex:i];
-        DLog(@"%d %d",result.range.length,result.range.location);
-        NSString *match = [string substringWithRange:result.range];
-        DLog(@"%@",match);
-    }
+//    NSArray *array = [regex matchesInString:string options:0 range:NSMakeRange(0, [string length])];
+//    for (int i = 0; i < [array count]; i++) {
+//        NSTextCheckingResult *result = [array objectAtIndex:i];
+//        DLog(@"%d %d",result.range.length,result.range.location);
+//        NSString *match = [string substringWithRange:result.range];
+//        DLog(@"%@",match);
+//    }
     DLog(@"%@",string);
     string = [string stringByReplacingOccurrencesOfString:@"<i>*" withString:@"<i>"];
     string = [string stringByReplacingOccurrencesOfString:@"*</i>" withString:@"</i>"];
@@ -275,7 +275,7 @@
         NSString *subStr = [array objectAtIndex:i];
 
             DLog(@"%@",subStr);
-            NSString *regString = @"[0-9][\\.][ ].*";
+            NSString *regString = @"[0-9]*[\\.][ ].*";
             NSError *error = NULL;
             NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:regString options:NSRegularExpressionCaseInsensitive error:&error];
             int count = [regex numberOfMatchesInString:subStr options:0 range:NSMakeRange(0, [subStr length])];
@@ -293,7 +293,7 @@
                 }
             }
             
-            regString = @"[0-9]+[\\.]+[ ]";
+            regString = @"[0-9]*+[\\.]+[ ]";
             error = NULL;
             regex = [NSRegularExpression regularExpressionWithPattern:regString options:NSRegularExpressionCaseInsensitive error:&error];
             subStr = [regex stringByReplacingMatchesInString:subStr options:0 range:NSMakeRange(0, [subStr length]) withTemplate:@""];
