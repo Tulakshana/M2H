@@ -268,35 +268,76 @@
 
 - (NSString *)makeList:(NSString *)string{
     DLog(@"%@",string);
+    
+//    NSString *regString = @"[\n][0-9]*[\\.][ ].*";
+//    NSError *error = NULL;
+//    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:regString options:NSRegularExpressionCaseInsensitive error:&error];
+////    int count = [regex numberOfMatchesInString:string options:0 range:NSMakeRange(0, [subStr length])];
+////    if (count == 0) {
+////        if (listTagOpened) {
+////            subStr = [NSString stringWithFormat:@"</ol>%@",subStr];
+////            listTagOpened = FALSE;
+////        }
+////    }else {
+////        if (!listTagOpened) {
+////            subStr = [regex stringByReplacingMatchesInString:subStr options:0 range:NSMakeRange(0, [subStr length]) withTemplate:@"<ol><li>$0</li>"];
+////            listTagOpened = TRUE;
+////        }else {
+//            string = [regex stringByReplacingMatchesInString:string options:0 range:NSMakeRange(0, [string length]) withTemplate:@"<li>$0</li>"];
+////        }
+////    }
+//    regString = @"[\\<][l][i][\\>].*[\\<][\\/][l][i][\\>]";
+//    error = NULL;
+//    regex = [NSRegularExpression regularExpressionWithPattern:regString options:NSRegularExpressionCaseInsensitive error:&error];
+//    string = [regex stringByReplacingMatchesInString:string options:0 range:NSMakeRange(0, [string length]) withTemplate:@"<ol>$0</ol>"];
+//    
+//NSString *finalString = string;
     NSString *finalString = @"";
     NSArray *array = [string componentsSeparatedByString:@"\n"];
     BOOL listTagOpened = FALSE;
     for (int i = 0; i < [array count]; i++) {
         NSString *subStr = [array objectAtIndex:i];
-
+        NSString *regString = nil;
+        NSError *error = NULL;
+        NSRegularExpression *regex = nil;
+        int count = 0;
             DLog(@"%@",subStr);
-            NSString *regString = @"[0-9]*[\\.][ ].*";
-            NSError *error = NULL;
-            NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:regString options:NSRegularExpressionCaseInsensitive error:&error];
-            int count = [regex numberOfMatchesInString:subStr options:0 range:NSMakeRange(0, [subStr length])];
-            if (count == 0) {
+        if ([subStr length] > 0) {
+            NSString *firstCharacter = [subStr substringToIndex:1];
+            regString = @"[0-9]";
+            error = NULL;
+            regex = [NSRegularExpression regularExpressionWithPattern:regString options:NSRegularExpressionCaseInsensitive error:&error];
+            count = [regex numberOfMatchesInString:firstCharacter options:0 range:NSMakeRange(0, [firstCharacter length])];
+            
+            if (count > 0) {
+                regString = @"[0-9]*[\\.][ ].*";
+                error = NULL;
+                regex = [NSRegularExpression regularExpressionWithPattern:regString options:NSRegularExpressionCaseInsensitive error:&error];
+                count = [regex numberOfMatchesInString:subStr options:0 range:NSMakeRange(0, [subStr length])];
+                if (count == 0) {
+                    if (listTagOpened) {
+                        subStr = [NSString stringWithFormat:@"</ol>%@",subStr];
+                        listTagOpened = FALSE;
+                    }
+                }else {
+                    if (!listTagOpened) {
+                        subStr = [regex stringByReplacingMatchesInString:subStr options:0 range:NSMakeRange(0, [subStr length]) withTemplate:@"<ol><li>$0</li>"];
+                        listTagOpened = TRUE;
+                    }else {
+                        subStr = [regex stringByReplacingMatchesInString:subStr options:0 range:NSMakeRange(0, [subStr length]) withTemplate:@"<li>$0</li>"];
+                    }
+                }
+                regString = @"[0-9]*+[\\.]+[ ]";
+                error = NULL;
+                regex = [NSRegularExpression regularExpressionWithPattern:regString options:NSRegularExpressionCaseInsensitive error:&error];
+                subStr = [regex stringByReplacingMatchesInString:subStr options:0 range:NSMakeRange(0, [subStr length]) withTemplate:@""];
+            }else{
                 if (listTagOpened) {
                     subStr = [NSString stringWithFormat:@"</ol>%@",subStr];
                     listTagOpened = FALSE;
                 }
-            }else {
-                if (!listTagOpened) {
-                    subStr = [regex stringByReplacingMatchesInString:subStr options:0 range:NSMakeRange(0, [subStr length]) withTemplate:@"<ol><li>$0</li>"];
-                    listTagOpened = TRUE;
-                }else {
-                    subStr = [regex stringByReplacingMatchesInString:subStr options:0 range:NSMakeRange(0, [subStr length]) withTemplate:@"<li>$0</li>"];
-                }
             }
-            
-            regString = @"[0-9]*+[\\.]+[ ]";
-            error = NULL;
-            regex = [NSRegularExpression regularExpressionWithPattern:regString options:NSRegularExpressionCaseInsensitive error:&error];
-            subStr = [regex stringByReplacingMatchesInString:subStr options:0 range:NSMakeRange(0, [subStr length]) withTemplate:@""];
+
             
             //        subStr = [subStr stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]];
             if (listTagOpened) {
@@ -305,6 +346,8 @@
                 finalString = [NSString stringWithFormat:@"%@\n%@",finalString,subStr];
             }
             DLog(@"%@",finalString);
+            
+        }
 
     }
     
@@ -318,33 +361,41 @@
     for (int i = 0; i < [array count]; i++) {
         NSString *subStr = [array objectAtIndex:i];
         
-        DLog(@"%@",subStr);
-        NSString *regString = @"[\\*][ ].*";
-        NSError *error = NULL;
-        NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:regString options:NSRegularExpressionCaseInsensitive error:&error];
-        int count = [regex numberOfMatchesInString:subStr options:0 range:NSMakeRange(0, [subStr length])];
-        
-        
-        
-        if (count == 0) {
-            if (listTagOpened) {
-                subStr = [NSString stringWithFormat:@"</ul>%@",subStr];
-                listTagOpened = FALSE;
-            }
-            
-        }else {
-            if (!listTagOpened) {
-                subStr = [regex stringByReplacingMatchesInString:subStr options:0 range:NSMakeRange(0, [subStr length]) withTemplate:@"<ul><li>$0</li>"];
-                listTagOpened = TRUE;
+        if ([subStr length] > 0) {
+            if ([[subStr substringToIndex:1] isEqualToString:@"*"]) {
+                DLog(@"%@",subStr);
+                NSString *regString = @"[\\*][ ].*";
+                NSError *error = NULL;
+                NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:regString options:NSRegularExpressionCaseInsensitive error:&error];
+                int count = [regex numberOfMatchesInString:subStr options:0 range:NSMakeRange(0, [subStr length])];
+                
+                if (count == 0) {
+                    if (listTagOpened) {
+                        subStr = [NSString stringWithFormat:@"</ul>%@",subStr];
+                        listTagOpened = FALSE;
+                    }
+                    
+                }else {
+                    if (!listTagOpened) {
+                        subStr = [regex stringByReplacingMatchesInString:subStr options:0 range:NSMakeRange(0, [subStr length]) withTemplate:@"<ul><li>$0</li>"];
+                        listTagOpened = TRUE;
+                    }else {
+                        subStr = [regex stringByReplacingMatchesInString:subStr options:0 range:NSMakeRange(0, [subStr length]) withTemplate:@"<li>$0</li>"];
+                    }
+                }
+                
+                regString = @"[\\*]+[ ]";
+                error = NULL;
+                regex = [NSRegularExpression regularExpressionWithPattern:regString options:NSRegularExpressionCaseInsensitive error:&error];
+                subStr = [regex stringByReplacingMatchesInString:subStr options:0 range:NSMakeRange(0, [subStr length]) withTemplate:@""];
+
             }else {
-                subStr = [regex stringByReplacingMatchesInString:subStr options:0 range:NSMakeRange(0, [subStr length]) withTemplate:@"<li>$0</li>"];
+                if (listTagOpened) {
+                    subStr = [NSString stringWithFormat:@"</ul>%@",subStr];
+                    listTagOpened = FALSE;
+                }
             }
         }
-        
-        regString = @"[\\*]+[ ]";
-        error = NULL;
-        regex = [NSRegularExpression regularExpressionWithPattern:regString options:NSRegularExpressionCaseInsensitive error:&error];
-        subStr = [regex stringByReplacingMatchesInString:subStr options:0 range:NSMakeRange(0, [subStr length]) withTemplate:@""];
         
         //        subStr = [subStr stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]];
         if (listTagOpened) {
@@ -360,7 +411,6 @@
         finalString = [NSString stringWithFormat:@"%@</ul>",finalString];
         listTagOpened = FALSE;
     }
-    
     
     finalString = [finalString stringByReplacingOccurrencesOfString:@"<li></li>" withString:@""];
     if ([finalString length] <=0) {
