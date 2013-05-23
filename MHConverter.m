@@ -340,14 +340,15 @@
 
             
             //        subStr = [subStr stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]];
-            if (listTagOpened) {
-                finalString = [NSString stringWithFormat:@"%@%@",finalString,subStr];
-            }else {
-                finalString = [NSString stringWithFormat:@"%@\n%@",finalString,subStr];
-            }
-            DLog(@"%@",finalString);
+
             
         }
+        if (listTagOpened) {
+            finalString = [NSString stringWithFormat:@"%@%@",finalString,subStr];
+        }else {
+            finalString = [NSString stringWithFormat:@"%@\n%@",finalString,subStr];
+        }
+        DLog(@"%@",finalString);
 
     }
     
